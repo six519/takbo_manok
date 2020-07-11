@@ -53,13 +53,28 @@ void init() {
     SPRITES_8x16;
     set_bkg_data(0, 19, backgroundTiles);
     set_bkg_tiles(0, 0, 40, 18, gameTitleMap);
-    set_sprite_data(0, 12, manokTiles);
+    set_sprite_data(0, 24, manokTiles);
     HIDE_WIN;
     SHOW_SPRITES;
     SHOW_BKG;
     NR52_REG = 0x80;
     NR50_REG = 0x77;
     NR51_REG = 0xFF;
+}
+
+void show_score() {
+    set_sprite_tile(2, 12);
+    move_sprite(2, 9, 17);
+    set_sprite_tile(3, 14);
+    move_sprite(3, 9 * 2, 17);
+    set_sprite_tile(4, 16);
+    move_sprite(4, 9 * 3, 17);
+    set_sprite_tile(5, 18);
+    move_sprite(5, 9 * 4, 17);
+    set_sprite_tile(6, 20);
+    move_sprite(6, 9 * 5, 17);
+    set_sprite_tile(7, 22);
+    move_sprite(7, 9 * 6, 17);
 }
 
 void animate_manok(int x, int y, int * can_jump) {
@@ -119,6 +134,7 @@ void main() {
         if (game_state == 1) {
             // main game
             animate_manok(manok_x, manox_y, &can_jump);
+            show_score();
             scroll_bkg(4, 0);
         }
         wait_vbl_done();
