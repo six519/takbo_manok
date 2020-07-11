@@ -38,9 +38,11 @@ void check_input(int * game_state, int * can_jump) {
 
         case J_B:
         case J_A:
-            if (*can_jump) {
-                play_sound_jump();
-                *can_jump = 0;
+            if (*game_state == 1) {
+                if (*can_jump) {
+                    play_sound_jump();
+                    *can_jump = 0;
+                }
             }
         break;
         default:
@@ -53,7 +55,7 @@ void init() {
     SPRITES_8x16;
     set_bkg_data(0, 19, backgroundTiles);
     set_bkg_tiles(0, 0, 40, 18, gameTitleMap);
-    set_sprite_data(0, 24, manokTiles);
+    set_sprite_data(0, 28, manokTiles);
     HIDE_WIN;
     SHOW_SPRITES;
     SHOW_BKG;
@@ -62,7 +64,7 @@ void init() {
     NR51_REG = 0xFF;
 }
 
-void show_score() {
+void show_score(int score) {
     set_sprite_tile(2, 12);
     move_sprite(2, 9, 17);
     set_sprite_tile(3, 14);
@@ -75,6 +77,19 @@ void show_score() {
     move_sprite(6, 9 * 5, 17);
     set_sprite_tile(7, 22);
     move_sprite(7, 9 * 6, 17);
+}
+
+void show_lives(int lives) {
+    int x = 0;
+    int sprite_index = 8;
+    int total_width = 9;
+    int current_width = total_width;
+    for (x = 0; x < lives; x++) {
+        set_sprite_tile(sprite_index, 24);
+        move_sprite(sprite_index, current_width, 17 + 12);
+        sprite_index += 1;
+        current_width += total_width;
+    }
 }
 
 void animate_manok(int x, int y, int * can_jump) {
@@ -125,6 +140,8 @@ void main() {
     int manok_x = 18;
     int manox_y = 97;
     int can_jump = 1;
+    int score = 0;
+    int lives = 3;
 
     init();
 
@@ -134,7 +151,8 @@ void main() {
         if (game_state == 1) {
             // main game
             animate_manok(manok_x, manox_y, &can_jump);
-            show_score();
+            show_score(score);
+            show_lives(lives);
             scroll_bkg(4, 0);
         }
         wait_vbl_done();
