@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "graphics.h"
 
-void play_sound() {
+void play_sound_jump() {
     NR10_REG = 0x16; 
     NR11_REG = 0x40;
     NR12_REG = 0x73;
@@ -10,10 +10,27 @@ void play_sound() {
     NR14_REG = 0xC3;
 }
 
+void play_sound_start() {
+    NR10_REG = 0x15;
+    NR11_REG = 0x96;
+    NR12_REG = 0x73;
+    NR13_REG = 0xBB;
+    NR14_REG = 0x85;
+}
+
+void play_sound_crash() {
+    NR10_REG = 0x4F;
+    NR11_REG = 0x96;
+    NR12_REG = 0xB7;
+    NR13_REG = 0xBB;
+    NR14_REG = 0x85;
+}
+
 void check_input(int * game_state, int * can_jump) {
     switch (joypad()) {
         case J_START:
             if (*game_state == 0) {
+                play_sound_start();
                 *game_state = 1;
                 set_bkg_tiles(0, 0, 40, 18, gameMap);
             }
@@ -22,7 +39,7 @@ void check_input(int * game_state, int * can_jump) {
         case J_B:
         case J_A:
             if (*can_jump) {
-                play_sound();
+                play_sound_jump();
                 *can_jump = 0;
             }
         break;
