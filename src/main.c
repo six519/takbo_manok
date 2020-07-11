@@ -2,6 +2,14 @@
 #include <stdio.h>
 #include "graphics.h"
 
+void play_sound() {
+    NR10_REG = 0x16; 
+    NR11_REG = 0x40;
+    NR12_REG = 0x73;
+    NR13_REG = 0x00; 
+    NR14_REG = 0xC3;
+}
+
 void check_input(int * game_state, int * can_jump) {
     switch (joypad()) {
         case J_START:
@@ -14,6 +22,7 @@ void check_input(int * game_state, int * can_jump) {
         case J_B:
         case J_A:
             if (*can_jump) {
+                play_sound();
                 *can_jump = 0;
             }
         break;
@@ -31,6 +40,9 @@ void init() {
     HIDE_WIN;
     SHOW_SPRITES;
     SHOW_BKG;
+    NR52_REG = 0x80;
+    NR50_REG = 0x77;
+    NR51_REG = 0xFF;
 }
 
 void animate_manok(int x, int y, int * can_jump) {
@@ -52,7 +64,7 @@ void animate_manok(int x, int y, int * can_jump) {
         int reverse = 0;
 
         for (b=0; b<2; b++) {
-            for (a=0; a<5; a++) {
+            for (a=0; a<6; a++) {
                 if (reverse) {
                     orig_y += additional_value;
                 } else {
@@ -64,7 +76,7 @@ void animate_manok(int x, int y, int * can_jump) {
                 move_sprite(1, x + 8, orig_y);
                 delay(80);
                 scroll_bkg(4, 0);
-                if (a == 4) {
+                if (a == 5) {
                     if(!reverse) {
                         reverse = 1;
                     } else {
