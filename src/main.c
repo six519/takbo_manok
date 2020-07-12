@@ -56,7 +56,7 @@ void init() {
     SPRITES_8x16;
     set_bkg_data(0, 19, backgroundTiles);
     set_bkg_tiles(0, 0, 40, 18, gameTitleMap);
-    set_sprite_data(0, 44, manokTiles);
+    set_sprite_data(0, 48, manokTiles);
     HIDE_WIN;
     SHOW_SPRITES;
     SHOW_BKG;
@@ -89,6 +89,42 @@ void show_score(int score) {
         switch (buffer[i]) {
         case '0':
             set_sprite_tile(sprite_index, 28);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '1':
+            set_sprite_tile(sprite_index, 30);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '2':
+            set_sprite_tile(sprite_index, 32);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '3':
+            set_sprite_tile(sprite_index, 34);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '4':
+            set_sprite_tile(sprite_index, 36);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '5':
+            set_sprite_tile(sprite_index, 38);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '6':
+            set_sprite_tile(sprite_index, 40);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '7':
+            set_sprite_tile(sprite_index, 42);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '8':
+            set_sprite_tile(sprite_index, 44);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        case '9':
+            set_sprite_tile(sprite_index, 46);
             move_sprite(sprite_index, 9 * multiplier, 17);
         break;
         default:
@@ -174,6 +210,7 @@ void main() {
             show_score(score);
             show_lives(lives);
             scroll_bkg(4, 0);
+            score += 1;
         }
         wait_vbl_done();
     }
