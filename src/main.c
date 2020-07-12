@@ -56,7 +56,7 @@ void init() {
     SPRITES_8x16;
     set_bkg_data(0, 19, backgroundTiles);
     set_bkg_tiles(0, 0, 40, 18, gameTitleMap);
-    set_sprite_data(0, 48, manokTiles);
+    set_sprite_data(0, 56, manokTiles);
     HIDE_WIN;
     SHOW_SPRITES;
     SHOW_BKG;
@@ -148,9 +148,19 @@ void show_lives(int lives) {
     }
 }
 
-void animate_manok(int x, int y, int * can_jump, int * score_to_change) {
+void spawn_obstacle(int sprite_index, int tile_index, int * ox, int sprite_y) {
+    set_sprite_tile(sprite_index, tile_index);
+    move_sprite(sprite_index, *ox, sprite_y);
+    *ox -= 4;
+    if (*ox == 0) {
+        *ox = 168;
+    }
+}
+
+void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * obstacle_1, int * obstacle_2) {
     int additional_value = 2;
     int orig_y = y;
+
     if (*can_jump) {
         set_sprite_tile(0, 4);
         move_sprite(0, x, y);
@@ -162,13 +172,15 @@ void animate_manok(int x, int y, int * can_jump, int * score_to_change) {
         set_sprite_tile(1, 10);
         move_sprite(1, x + 8, y);
         show_score(*score_to_change);
+        spawn_obstacle(17, 48, obstacle_1, y);
+        spawn_obstacle(18, 50, obstacle_2, y);
     } else {
         int a = 0;
         int b = 0;
         int reverse = 0;
 
         for (b=0; b<2; b++) {
-            for (a=0; a<6; a++) {
+            for (a=0; a<10; a++) {
                 if (reverse) {
                     orig_y += additional_value;
                 } else {
@@ -180,9 +192,11 @@ void animate_manok(int x, int y, int * can_jump, int * score_to_change) {
                 move_sprite(1, x + 8, orig_y);
                 *score_to_change += 1;
                 show_score(*score_to_change);
+                spawn_obstacle(17, 48, obstacle_1, y);
+                spawn_obstacle(18, 50, obstacle_2, y);
                 delay(80);
                 scroll_bkg(4, 0);
-                if (a == 5) {
+                if (a == 9) {
                     if(!reverse) {
                         reverse = 1;
                     } else {
@@ -202,6 +216,8 @@ void main() {
     int can_jump = 1;
     int score = 0;
     int lives = 3;
+    int obstacle_x_1 = 168;
+    int obstacle_x_2 = 264;
 
     init();
 
@@ -210,7 +226,7 @@ void main() {
 
         if (game_state == 1) {
             // main game
-            animate_manok(manok_x, manox_y, &can_jump, &score);
+            animate_manok(manok_x, manox_y, &can_jump, &score, &obstacle_x_1, &obstacle_x_2);
             show_lives(lives);
             scroll_bkg(4, 0);
         }
