@@ -1,5 +1,6 @@
 #include <gb/gb.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "graphics.h"
 
 void play_sound_jump() {
@@ -55,7 +56,7 @@ void init() {
     SPRITES_8x16;
     set_bkg_data(0, 19, backgroundTiles);
     set_bkg_tiles(0, 0, 40, 18, gameTitleMap);
-    set_sprite_data(0, 28, manokTiles);
+    set_sprite_data(0, 44, manokTiles);
     HIDE_WIN;
     SHOW_SPRITES;
     SHOW_BKG;
@@ -65,6 +66,12 @@ void init() {
 }
 
 void show_score(int score) {
+	char buffer[6];
+    int i = 0;
+    int multiplier = 7;
+    int sprite_index = 11;
+	itoa(score, buffer);
+
     set_sprite_tile(2, 12);
     move_sprite(2, 9, 17);
     set_sprite_tile(3, 14);
@@ -77,6 +84,19 @@ void show_score(int score) {
     move_sprite(6, 9 * 5, 17);
     set_sprite_tile(7, 22);
     move_sprite(7, 9 * 6, 17);
+
+    for (i = 0; i < 6; i++) {
+        switch (buffer[i]) {
+        case '0':
+            set_sprite_tile(sprite_index, 28);
+            move_sprite(sprite_index, 9 * multiplier, 17);
+        break;
+        default:
+            break;
+        }
+        sprite_index += 1;
+        multiplier += 1;
+    }
 }
 
 void show_lives(int lives) {
