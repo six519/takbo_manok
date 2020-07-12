@@ -179,6 +179,19 @@ int collided(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
     return ret;
 }
 
+void handle_things(int * obstacle_1, int * obstacle_2, int score_to_change, int x, int y, int orig_y, int * lives, int * remove_lives) {
+    show_score(score_to_change);
+    spawn_obstacle(17, 48, obstacle_1, y);
+    spawn_obstacle(18, 50, obstacle_2, y);
+    if (collided(x, orig_y, 6, 10, *obstacle_1, y, 6, 10) || collided(x, orig_y, 6, 10, *obstacle_2, y, 6, 10)) {
+        if (*remove_lives) {
+            play_sound_crash();
+            *lives -= 1;
+            *remove_lives = 0;
+        }
+    }
+}
+
 void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * obstacle_1, int * obstacle_2, int * lives, int * remove_lives) {
     int additional_value = 2;
     int orig_y = y;
@@ -193,16 +206,7 @@ void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * ob
         move_sprite(0, x, y);
         set_sprite_tile(1, 10);
         move_sprite(1, x + 8, y);
-        show_score(*score_to_change);
-        spawn_obstacle(17, 48, obstacle_1, y);
-        spawn_obstacle(18, 50, obstacle_2, y);
-        if (collided(x, orig_y, 6, 10, *obstacle_1, y, 6, 10) || collided(x, orig_y, 6, 10, *obstacle_2, y, 6, 10)) {
-            if (*remove_lives) {
-                play_sound_crash();
-                *lives -= 1;
-                *remove_lives = 0;
-            }
-        }
+        handle_things(obstacle_1, obstacle_2, *score_to_change, x, y, orig_y, lives, remove_lives);
     } else {
         int a = 0;
         int b = 0;
@@ -220,16 +224,7 @@ void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * ob
                 set_sprite_tile(1, 2);
                 move_sprite(1, x + 8, orig_y);
                 *score_to_change += 1;
-                show_score(*score_to_change);
-                spawn_obstacle(17, 48, obstacle_1, y);
-                spawn_obstacle(18, 50, obstacle_2, y);
-                if (collided(x, orig_y, 6, 10, *obstacle_1, y, 6, 10) || collided(x, orig_y, 6, 10, *obstacle_2, y, 6, 10)) {
-                    if (*remove_lives) {
-                        play_sound_crash();
-                        *lives -= 1;
-                        *remove_lives = 0;
-                    }
-                }
+                handle_things(obstacle_1, obstacle_2, *score_to_change, x, y, orig_y, lives, remove_lives);
                 delay(80);
                 scroll_bkg(4, 0);
                 if (a == 9) {
