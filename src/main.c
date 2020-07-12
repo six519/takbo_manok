@@ -140,6 +140,18 @@ void show_lives(int lives) {
     int sprite_index = 8;
     int total_width = 9;
     int current_width = total_width;
+
+    //clear first
+    for(x =0; x < 3; x++) {
+        set_sprite_tile(sprite_index, 26);
+        move_sprite(sprite_index, current_width, 17 + 12);
+        sprite_index += 1;
+        current_width += total_width;        
+    }
+
+    sprite_index = 8;
+    current_width = total_width;
+
     for (x = 0; x < lives; x++) {
         set_sprite_tile(sprite_index, 24);
         move_sprite(sprite_index, current_width, 17 + 12);
@@ -157,7 +169,17 @@ void spawn_obstacle(int sprite_index, int tile_index, int * ox, int sprite_y) {
     }
 }
 
-void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * obstacle_1, int * obstacle_2) {
+int collided(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    int ret = 0;
+
+    if (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2) {
+        return 1;
+    }
+
+    return ret;
+}
+
+void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * obstacle_1, int * obstacle_2, int * lives, int * remove_lives) {
     int additional_value = 2;
     int orig_y = y;
 
@@ -174,6 +196,13 @@ void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * ob
         show_score(*score_to_change);
         spawn_obstacle(17, 48, obstacle_1, y);
         spawn_obstacle(18, 50, obstacle_2, y);
+        if (collided(x, orig_y, 6, 10, *obstacle_1, y, 6, 10) || collided(x, orig_y, 6, 10, *obstacle_2, y, 6, 10)) {
+            if (*remove_lives) {
+                play_sound_crash();
+                *lives -= 1;
+                *remove_lives = 0;
+            }
+        }
     } else {
         int a = 0;
         int b = 0;
@@ -194,6 +223,13 @@ void animate_manok(int x, int y, int * can_jump, int * score_to_change, int * ob
                 show_score(*score_to_change);
                 spawn_obstacle(17, 48, obstacle_1, y);
                 spawn_obstacle(18, 50, obstacle_2, y);
+                if (collided(x, orig_y, 6, 10, *obstacle_1, y, 6, 10) || collided(x, orig_y, 6, 10, *obstacle_2, y, 6, 10)) {
+                    if (*remove_lives) {
+                        play_sound_crash();
+                        *lives -= 1;
+                        *remove_lives = 0;
+                    }
+                }
                 delay(80);
                 scroll_bkg(4, 0);
                 if (a == 9) {
@@ -218,6 +254,8 @@ void main() {
     int lives = 3;
     int obstacle_x_1 = 168;
     int obstacle_x_2 = 264;
+    int remove_lives = 1;
+    int threshold = 0;
 
     init();
 
@@ -226,9 +264,21 @@ void main() {
 
         if (game_state == 1) {
             // main game
-            animate_manok(manok_x, manox_y, &can_jump, &score, &obstacle_x_1, &obstacle_x_2);
+            animate_manok(manok_x, manox_y, &can_jump, &score, &obstacle_x_1, &obstacle_x_2, &lives, &remove_lives);
             show_lives(lives);
             scroll_bkg(4, 0);
+            
+            if (!remove_lives) {
+                threshold += 1;
+                if (threshold == 5) {
+                    threshold = 0;
+                    remove_lives = 1;
+                }
+            }
+
+            if (lives == 0) {
+                game_state = 2;
+            }
         }
         wait_vbl_done();
     }
