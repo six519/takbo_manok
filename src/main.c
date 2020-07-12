@@ -148,7 +148,7 @@ void show_lives(int lives) {
     }
 }
 
-void animate_manok(int x, int y, int * can_jump) {
+void animate_manok(int x, int y, int * can_jump, int * score_to_change) {
     int additional_value = 2;
     int orig_y = y;
     if (*can_jump) {
@@ -161,6 +161,7 @@ void animate_manok(int x, int y, int * can_jump) {
         move_sprite(0, x, y);
         set_sprite_tile(1, 10);
         move_sprite(1, x + 8, y);
+        show_score(*score_to_change);
     } else {
         int a = 0;
         int b = 0;
@@ -177,6 +178,8 @@ void animate_manok(int x, int y, int * can_jump) {
                 move_sprite(0, x, orig_y);
                 set_sprite_tile(1, 2);
                 move_sprite(1, x + 8, orig_y);
+                *score_to_change += 1;
+                show_score(*score_to_change);
                 delay(80);
                 scroll_bkg(4, 0);
                 if (a == 5) {
@@ -189,6 +192,7 @@ void animate_manok(int x, int y, int * can_jump) {
             }
         }
     }
+    *score_to_change += 1;
 }
 
 void main() {
@@ -206,11 +210,9 @@ void main() {
 
         if (game_state == 1) {
             // main game
-            animate_manok(manok_x, manox_y, &can_jump);
-            show_score(score);
+            animate_manok(manok_x, manox_y, &can_jump, &score);
             show_lives(lives);
             scroll_bkg(4, 0);
-            score += 1;
         }
         wait_vbl_done();
     }
